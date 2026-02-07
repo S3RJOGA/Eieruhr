@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Eieruhr</title>
+
+    <style>
+        /* Verhindert Scrollen und nutzt die volle Höhe */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: black;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Hauptcontainer: Verteilt die Elemente gleichmäßig */
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+            padding: 10px 0;
+            box-sizing: border-box;
+        }
+
+        .menu-container {
+            width: 100%;
+            text-align: left;
+        }
+
+        .menu-img {
+            width: 30px; /* Kleineres Menu-Icon */
+            height: auto;
+            margin-left: 15px;
+        }
+
+        /* Container für Ei, Timer und Button */
+        .content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2vh; /* Flexibler Abstand zwischen den Elementen */
+            width: 100%;
+        }
+
+        .egg-img {
+            width: 150px; /* Standardgröße verringert */
+            max-width: 40vw; /* Maximal 40% der Bildschirmbreite */
+            max-height: 25vh; /* Maximal 25% der Bildschirmhöhe */
+            height: auto;
+            object-fit: contain;
+        }
+
+        .timer {
+            font-size: clamp(40px, 10vh, 60px); /* Schriftgröße passt sich Display an */
+            color: white;
+            margin: 10px 0;
+        }
+
+        .btn-img {
+            width: 100px; /* Button verkleinert */
+            max-width: 40vw;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .btn-img:active {
+            transform: scale(0.95);
+        }
+
+        /* Anpassung für sehr kleine Handys oder Querformat */
+        @media (max-height: 500px) {
+            .egg-img { width: 80px; }
+            .timer { font-size: 30px; }
+            .btn-img { width: 80px; }
+            .content { gap: 5px; }
+        }
+    </style>
+
+    <script>
+        let alarm = new Audio('alarm.flac');
+        let timerStarted = false;
+        let interval;
+
+        function startTimer() {
+            if (timerStarted) return;
+            timerStarted = true;
+
+            let startTime = new Date().getTime();
+            let fiveMinutes = 1000 * 60 * 5;
+            let endTime = startTime + fiveMinutes;
+
+            interval = setInterval(function () {
+                let timeLeft = endTime - new Date().getTime();
+
+                if (timeLeft > 0) {
+                    let minutes = Math.floor(timeLeft / (1000 * 60));
+                    let seconds = Math.floor((timeLeft / 1000) % 60);
+                    seconds = ('0' + seconds).slice(-2);
+
+                    document.getElementById("timer").innerHTML =
+                        '0' + minutes + ' : ' + seconds;
+                } else {
+                    clearInterval(interval);
+                    document.getElementById("timer").innerHTML = '00 : 00';
+                    alarm.play();
+                    timerStarted = false; // Timer kann nach Ablauf neu gestartet werden
+                }
+            }, 1000);
+        }
+    </script>
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <div class="menu-container">
+            <img src="img/menu.png" class="menu-img" alt="Menu">
+        </div>
+
+        <div class="content">
+            <img src="img/egg.png" class="egg-img" alt="Ei">
+            
+            <div class="timer" id="timer">
+                05 : 00
+            </div>
+
+            <img src="img/btn.png" class="btn-img" onclick="startTimer()" alt="Start">
+        </div>
+        
+        <div style="height: 30px;"></div>
+    </div>
+
+</body>
+</html>
